@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For My Babi</title>
+    <style>
+        :root {
+            --pink-main: #ff4d6d;
+            --pink-text: #d63384;
+            --gradient: linear-gradient(180deg, #fff0f3 0%, #ffccd5 100%);
+        }
+
+        body, html {
+            margin: 0; padding: 0; height: 100%;
+            background: var(--gradient);
+            font-family: 'SF Pro Display', 'Segoe UI', Roboto, Arial, sans-serif;
+            overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+            touch-action: manipulation;
+        }
+
+        /* 1. OVERLAY */
+        #overlay {
+            position: fixed; inset: 0;
+            background: var(--pink-main);
+            color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 1000; cursor: pointer; text-align: center;
+        }
+
+        /* 2. BEAR SCENE */
+        #mainScene {
+            display: none; /* Hidden by default */
+            position: relative;
+            width: 100%; height: 100vh;
+            flex-direction: column; align-items: center; justify-content: center;
+            transition: opacity 0.8s ease;
+        }
+
+        .text-container { height: 120px; display: flex; align-items: center; justify-content: center; z-index: 10; margin-bottom: 20px; }
+        .aesthetic-text { color: var(--pink-text); font-size: 1.8rem; font-weight: 800; text-align: center; padding: 0 30px; opacity: 0; transition: all 0.5s ease; }
+        .text-pop { opacity: 1; animation: popIn 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+
+        .bear-wrapper { width: 250px; z-index: 5; }
+        .bear-img { width: 100%; height: auto; border-radius: 20px; }
+
+        #startBtn {
+            margin-top: 40px; padding: 15px 45px;
+            background: var(--pink-main); color: white;
+            border: none; border-radius: 50px;
+            font-size: 1.2rem; font-weight: bold;
+            display: none; cursor: pointer;
+            box-shadow: 0 10px 20px rgba(255, 77, 109, 0.3);
+            animation: heartBeat 1.5s infinite;
+        }
+
+        @keyframes heartBeat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+        /* 3. MENU SECTION */
+        #menuSection {
+            display: none; position: fixed; inset: 0;
+            background: var(--gradient);
+            flex-direction: column; align-items: center; justify-content: center;
+            z-index: 500; opacity: 0; transition: opacity 1s ease;
+        }
+
+        /* 4. CONTENT PAGES */
+        .content-page {
+            display: none !important; /* Forces them to stay hidden until JS says otherwise */
+            position: fixed; inset: 0;
+            background: white; z-index: 600; padding: 20px;
+            text-align: center; overflow-y: auto;
+            flex-direction: column; align-items: center; justify-content: center;
+        }
+
+        .heart-bg { position: absolute; top: -10%; color: var(--pink-main); font-size: 20px; opacity: 0.5; animation: floatUp 6s linear infinite; z-index: 1; }
+        @keyframes floatUp { to { transform: translateY(110vh) rotate(360deg); } }
+
+        /* COUPON STYLE */
+        .coupon-card {
+            background: white; width: 85%; max-width: 320px; 
+            border: 2px dashed var(--pink-main); border-radius: 15px; 
+            padding: 20px; margin-bottom: 20px; position: relative; 
+            box-shadow: 0 5px 15px rgba(255, 77, 109, 0.1);
+        }
+
+        /* Page Specific Themes */
+        #songPage { background: linear-gradient(180deg, #fff9c4 0%, #fff176 100%); } /* Golden Daylight */
+        #letterPage { background: linear-gradient(180deg, #ffebee 0%, #ffcdd2 100%); } /* Romantic Red */
+        #memoriesPage { background: linear-gradient(180deg, #e1f5fe 0%, #b3e5fc 100%); } /* Sky Blue */
+        #bucketListPage { background: linear-gradient(180deg, #f3e5f5 0%, #e1bee7 100%); } /* Dreamy Purple */
+        #bouquetPage { background: linear-gradient(180deg, #e8f5e9 0%, #c8e6c9 100%); } /* Fresh Garden */
+
+    </style>
+</head>
+<body>
+
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://files.catbox.moe/qkjr3g.mp3" type="audio/mpeg">
+    </audio>
+
+    <div id="overlay">
+        <h1 style="font-size: 4rem; margin: 0;">💝</h1>
+        <p style="font-size: 1.4rem; font-weight: bold; margin-top: 10px;">Tap to start, Babi.</p>
+    </div>
+
+    <div id="mainScene">
+        <div class="text-container"><p class="aesthetic-text" id="textLine"></p></div>
+        <div class="bear-wrapper">
+            <img class="bear-img" src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExczV0emtod3kzbDBienhrZ2ltbDEzNGFxYzVhMzB4cjRpdGhubzJubyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/mRvzQIDr0gHCz82SV0/giphy.gif" alt="Cute Bear">
+        </div>
+        <button id="startBtn">READY? ❤️</button>
+    </div>
+
+    <div id="menuSection">
+        <h2 style="color: var(--pink-text); margin-bottom: 5px;"> Happy Valentine's Day, Babi!</h2>
+        <p style="color: #666; font-size: 0.9rem; margin-bottom: 20px;">Pick a gift below!</p>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; width: 90%; max-width: 400px;">
+            <div onclick="openPage('letterPage')" style="background: white; border-radius: 20px; padding: 20px; text-align: center; border: 2px solid #ffccd5; cursor: pointer;">
+                <span>💌</span><p style="margin:0; font-weight:bold; color:#d63384;">A Letter for Babi</p>
+            </div>
+            <div onclick="openPage('songPage')" style="background: white; border-radius: 20px; padding: 20px; text-align: center; border: 2px solid #ffccd5; cursor: pointer;">
+                <span>🎵</span><p style="margin:0; font-weight:bold; color:#d63384;">Song That Reminds Me of You</p>
+            </div>
+            <div onclick="openPage('memoriesPage')" style="background: white; border-radius: 20px; padding: 20px; text-align: center; border: 2px solid #ffccd5; cursor: pointer;">
+                <span>📸</span><p style="margin:0; font-weight:bold; color:#d63384;">The "Babi" Gallery</p>
+            </div>
+            <div onclick="openPage('bucketListPage')" style="background: white; border-radius: 20px; padding: 20px; text-align: center; border: 2px solid #ffccd5; cursor: pointer;">
+                <span>📜</span><p style="margin:0; font-weight:bold; color:#d63384;">100 Reasons Why</p>
+            </div>
+            <div onclick="openPage('bouquetPage')" style="background: white; border-radius: 20px; padding: 20px; text-align: center; border: 2px solid #ffccd5; cursor: pointer; grid-column: span 2;">
+                <span>💐</span><p style="margin:0; font-weight:bold; color:#d63384;">A Special Bouquet</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="songPage" class="content-page">
+        <h2 style="color: var(--pink-main); margin-top:0;">Daylight</h2>
+        <p style="color: #666; font-size: 0.8rem; margin-top: -10px;">Taylor Swift</p>
+        <div style="position: relative; width: 85%; padding-bottom: 48%; height: 0; margin: 15px auto; border-radius: 12px; overflow: hidden; box-shadow: 0 5px 15px rgba(255, 77, 109, 0.15); background: #000;">
+            <video id="videoPlayer" controls style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover;">
+                <source src="https://files.catbox.moe/l9aei8.mp4" type="video/mp4">
+            </video>
+        </div>
+        <p style="font-style:italic; color: var(--pink-text); padding: 0 30px; font-size: 0.9rem; line-height: 1.4;">"I once believed love would be black and white... <br> but it's golden, like daylight."</p>
+        <div onclick="closeSongPage()" style="margin-top:20px; color: var(--pink-main); font-weight:bold; cursor:pointer;">← Go Back</div>
+    </div>
+
+    <div id="letterPage" class="content-page">
+        <h2 style="color: var(--pink-main);">To my dearest Babi</h2>
+        <p style="line-height: 1.6; color: #444; padding: 0 20px;">I don't know how to start this letter, but here it is. I can't exactly say we had a magical 'first meeting' since we haven't met in person yet, but the moment I found you marked the most life-changing period for me. It started with a random Litmatch chat that I didn't expect to last this long. You always say I was the one who did the 'pangungulit,' which is true—I won't deny that. But that was supposed to be just pangungulit and nothing else, until I started to get drawn to you and your presence. I thought, 'Maybe she's worth a shot. What if I try again?' And I did. That was one of the best decisions of my life, because every moment with you feels special, even the ones that aren't always happy. You make me feel loved, seen, valued, and cared for. I am the happiest when you're around, and I thank you for that. Thank you for coming into my life. Thank you for putting up with my 'not-so-good' attitude, hahaha. Thank you for your patience, for making me a better person, and for staying. I couldn't thank you enough, Babi. I will spend my whole life being grateful for you. Always remember, I love you—always, in all ways possible. Happy Valentine's Day, Babi!</p>
+        <div onclick="closePage()" style="margin-top:30px; color: var(--pink-main); font-weight:bold; cursor:pointer;">← Go Back</div>
+    </div>
+
+   <div id="memoriesPage" class="content-page" style="display:none; position:fixed; inset:0; z-index:600; padding:20px; text-align:center; overflow-y:auto; display: flex; flex-direction: column; align-items: center; justify-content: flex-start;">
+    
+    <div style="width: 100%; padding-top: 40px; padding-bottom: 20px;">
+        <h2 style="color: var(--pink-main); margin: 0;">My Favorite Views</h2>
+        <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">(Because you're the prettiest girl in every room)</p>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 25px; align-items: center; width: 100%; padding-bottom: 50px;">
+        
+        <div style="background: white; width: 85%; max-width: 320px; padding: 12px; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 77, 109, 0.1);">
+            <img src="images/babi.jpeg" style="width: 100%; height: auto; border-radius: 10px; display: block;" alt="Babi">
+            <p style="margin-top: 12px; color: var(--pink-text); font-weight: bold; font-size: 0.9rem;">The most beautiful face. ✨</p>
+        </div>
+
+        <div style="background: white; width: 85%; max-width: 320px; padding: 12px; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 77, 109, 0.1);">
+            <img src="images/babi1.jpg" style="width: 100%; height: auto; border-radius: 10px; display: block;" alt="Babi">
+            <p style="margin-top: 12px; color: var(--pink-text); font-weight: bold; font-size: 0.9rem;">I love this smile. 🌸</p>
+        </div>
+
+        <div style="background: white; width: 85%; max-width: 320px; padding: 12px; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 77, 109, 0.1);">
+            <img src="images/babi2.jpg" style="width: 100%; height: auto; border-radius: 10px; display: block;" alt="Babi">
+            <p style="margin-top: 12px; color: var(--pink-text); font-weight: bold; font-size: 0.9rem;">Literally perfect. 😍</p>
+        </div>
+
+        <div style="background: white; width: 85%; max-width: 320px; padding: 12px; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 77, 109, 0.1);">
+            <img src="images/babi3.jpeg" style="width: 100%; height: auto; border-radius: 10px; display: block;" alt="Babi">
+            <p style="margin-top: 12px; color: var(--pink-text); font-weight: bold; font-size: 0.9rem;">My favorite person. 💖</p>
+        </div>
+
+        <div style="background: white; width: 85%; max-width: 320px; padding: 12px; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 77, 109, 0.1);">
+            <img src="images/babi4.jpg" style="width: 100%; height: auto; border-radius: 10px; display: block;" alt="Babi">
+            <p style="margin-top: 12px; color: var(--pink-text); font-weight: bold; font-size: 0.9rem;">Pogi yarnnnnn? HAHAHAHA</p>
+        </div>
+
+        <div style="background: white; width: 85%; max-width: 320px; padding: 12px; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 77, 109, 0.1);">
+            <img src="images/babi5.jpg" style="width: 100%; height: auto; border-radius: 10px; display: block;" alt="Babi">
+            <p style="margin-top: 12px; color: var(--pink-text); font-weight: bold; font-size: 0.9rem;">Guuurrllll, slay!!! ✨</p>
+        </div>
+
+        <div style="background: white; width: 85%; max-width: 320px; padding: 12px; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 77, 109, 0.1);">
+            <img src="images/babi6.jpg" style="width: 100%; height: auto; border-radius: 10px; display: block;" alt="Babi">
+            <p style="margin-top: 12px; color: var(--pink-text); font-weight: bold; font-size: 0.9rem;">Just Babi things. 🎀</p>
+        </div>
+
+        <div style="background: white; width: 85%; max-width: 320px; padding: 12px; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 77, 109, 0.1);">
+            <img src="images/babi7.jpeg" style="width: 100%; height: auto; border-radius: 10px; display: block;" alt="Babi">
+            <p style="margin-top: 12px; color: var(--pink-text); font-weight: bold; font-size: 0.9rem;">So precious.</p>
+        </div>
+
+        <div style="background: white; width: 85%; max-width: 320px; padding: 12px; border-radius: 15px; box-shadow: 0 8px 20px rgba(255, 77, 109, 0.1);">
+            <img src="images/babi8.jpeg" style="width: 100%; height: auto; border-radius: 10px; display: block;" alt="Babi">
+            <p style="margin-top: 12px; color: var(--pink-text); font-weight: bold; font-size: 0.9rem;">Always you. ❤️</p>
+        </div>
+
+    </div>
+
+    <div onclick="closePage()" style="margin-top:10px; color: var(--pink-main); font-weight:bold; cursor:pointer; padding-bottom: 60px;">← Go Back</div>
+</div>
+   <div id="bucketListPage" class="content-page">
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 50vh;">
+            <h2 id="reasonText" style="color: var(--pink-main); margin: 0; padding: 20px; font-size: 1.5rem; transition: all 0.3s ease;">100 Reasons Why I Love You</h2>
+            <button id="nextReasonBtn" onclick="nextReason()" style="background: var(--pink-main); color: white; border: none; padding: 12px 30px; border-radius: 50px; font-size: 1rem; margin-top: 20px; cursor: pointer; box-shadow: 0 5px 15px rgba(255,77,109,0.3);">Tap to see</button>
+        </div>
+
+        <div onclick="closePage()" style="margin-top:20px; color: var(--pink-main); font-weight:bold; cursor:pointer; padding-bottom: 60px;">← Go Back</div>
+    </div>
+
+    <div id="bouquetPage" class="content-page">
+        <h2 style="color: var(--pink-main); margin-top:0;">Flowers for Babi</h2>
+        <p style="color: #666; font-size: 0.8rem; margin-top: -5px;">(Since I can't give you real ones yet)</p>
+        
+        <div style="margin: 30px auto; width: 250px;">
+            <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExY2xhMnpvd2RqMDJ2bWtsdDd3YXhucDhwNm54cTl0dmUzNHVxOGt3aCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/Sy1m3x6DiJzOzeTDan/giphy.gif" style="width:100%; height:auto; border-radius: 15px;" alt="Bouquet">
+        </div>
+        
+        <p style="font-style:italic; color: var(--pink-text); padding: 0 30px; font-size: 0.9rem;">"Every flower blooms for you." 🌸</p>
+        <div onclick="closePage()" style="margin-top:20px; color: var(--pink-main); font-weight:bold; cursor:pointer;">← Go Back</div>
+    </div>
+
+    <script>
+        const overlay = document.getElementById('overlay');
+        const mainScene = document.getElementById('mainScene');
+        const menuSection = document.getElementById('menuSection');
+        const textLine = document.getElementById('textLine');
+        const startBtn = document.getElementById('startBtn');
+        const bgMusic = document.getElementById('bgMusic');
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-bg');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.animationDuration = (Math.random() * 2 + 4) + 's';
+            document.body.appendChild(heart);
+            setTimeout(() => heart.remove(), 6000);
+        }
+
+        // 1. CLICK OVERLAY -> START BEAR
+        function startExperience() {
+            bgMusic.play().catch(e => console.log("Audio block"));
+            overlay.style.display = 'none';
+            mainScene.style.display = 'flex';
+            setInterval(createHeart, 450);
+            runAnimation();
+        }
+
+        overlay.addEventListener('click', startExperience);
+
+        async function runAnimation() {
+            await sleep(1000); showText("hi!");
+            await sleep(2200); showText("my lovely, bubbly, babi!");
+            await sleep(3200); showText("I have a surprise for you...");
+            await sleep(2500); showText("because you deserve the world.");
+            await sleep(2500); showText("I hope you love it! ❤️");
+            await sleep(2000); startBtn.style.display = "block";
+        }
+
+        function showText(t) {
+            textLine.classList.remove('text-pop');
+            void textLine.offsetWidth;
+            textLine.innerText = t;
+            textLine.classList.add('text-pop');
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        // 2. CLICK READY -> START MENU
+        startBtn.onclick = () => {
+            mainScene.style.opacity = '0';
+            setTimeout(() => {
+                mainScene.style.display = 'none';
+                menuSection.style.display = 'flex';
+                setTimeout(() => { menuSection.style.opacity = '1'; }, 50);
+            }, 800);
+        };
+
+        // 3. PAGE LOGIC
+        function openPage(id) {
+            const page = document.getElementById(id);
+            page.style.setProperty('display', 'flex', 'important');
+            page.scrollTop = 0;
+            if (id === 'songPage') bgMusic.pause();
+            if (id === 'bucketListPage') resetReasons();
+        }
+
+        function closeSongPage() {
+            const video = document.getElementById('videoPlayer');
+            if (video) video.pause();
+            closePage();
+            bgMusic.play().catch(e => console.log("Audio resume error"));
+        }
+
+        function closePage() {
+    const pages = document.querySelectorAll('.content-page');
+    pages.forEach(p => p.style.setProperty('display', 'none', 'important'));
+    // Make sure the menu comes back
+    document.getElementById('menuSection').style.opacity = '1';
+}
+
+    let reasonStep = 0;
+    function nextReason() {
+        const text = document.getElementById('reasonText');
+        const btn = document.getElementById('nextReasonBtn');
+        const steps = [
+            "Oops, there's nothing! 😆",
+            "Are you expecting something? 🤨",
+            "I told you I love you, no whys. 💖",
+            "I JUST LOVE YOU! ❤️"
+        ];
+        
+        if (reasonStep < steps.length) {
+            text.innerText = steps[reasonStep];
+            if (reasonStep === steps.length - 1) {
+                text.style.fontSize = "2.5rem";
+                text.style.fontWeight = "900";
+                btn.style.display = "none";
+            }
+            reasonStep++;
+        }
+    }
+
+    function resetReasons() {
+        reasonStep = 0;
+        const text = document.getElementById('reasonText');
+        const btn = document.getElementById('nextReasonBtn');
+        text.innerText = "100 Reasons Why I Love You";
+        text.style.fontSize = "1.5rem";
+        text.style.fontWeight = "bold";
+        btn.style.display = "block";
+        btn.innerText = "Tap to see";
+    }
+
+    </script>
+</body>
+</html>
